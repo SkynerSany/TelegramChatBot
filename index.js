@@ -1,52 +1,59 @@
-import axios from 'axios'
-// import fs from 'fs-extra'
-// import { join } from 'path'
-import bodyParser from 'body-parser';
-import { config } from 'dotenv'
-import express from 'express'
+const express = require('express');
+const bodyParser = require('body-parser');
+const https = require('https');
 
-config()
-const app = express()
+// Токен вашего бота, полученный от BotFather
+const token = '6450005981:AAHBINvOdwmyvUtxAOzfbresVKqPUEarQyQ';
 
-const TELEGRAM_URI = `https://api.telegram.org/bot${process.env.TELEGRAM_API_TOKEN}/sendMessage`
-
+// Создаем экземпляр Express
+const app = express();
 app.use(bodyParser.json());
-app.use(bodyParser.json());
-  app.use(bodyParser.urlencoded({
-    extended: true,
-  }))
 
-app.post('newMessage', async (req, res) => {
-  const { message } = req.body
-  console.log(message);
-  const messageText = message?.text?.toLowerCase()?.trim()
-  const chatId = message?.chat?.id
-  console.log('chatId:' + chatId);
-  if (!messageText || !chatId) {
-    return res.sendStatus(400)
-  }
+// Маршрут для обработки входящих сообщений
+app.post('/message', (req, res) => {
+  // Получаем текст сообщения из запроса
+  const { message } = req.body;
+  const { chat } = message;
+  const chatId = chat.id;
+  const text = message.text;
 
-  let responseText = 'I have nothing to say.'
-  // generate responseText
-  if (messageText === 'joke') {
-    responseText = 'If Rusya Huy its normal'
-  }
+  // Отвечаем на сообщение
+  const response = {
+    chat_id: chatId,
+    text: `Согласен - ${text}`
+  };
 
-  // send response
-  try {
-    console.log('ttttttttttttttttttt')
-    await axios.post(TELEGRAM_URI, {
-      chat_id: chatId,
-      text: responseText
-    })
-    res.send('Done')
-  } catch (e) {
-    console.log(e)
-    res.send(e)
-  }
-})
+  // Отправляем ответ об успешной обработке запроса
+  res.sendStatus(200);
 
-const PORT = process.env.PORT || 3000
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
-})
+  // Отправляем ответное сообщение бота
+  const postData = JSON.stringify(response);
+  const options = {
+    hostname: 'api.telegram.org',
+    port: 443,
+    path: `/bot${token}/sendMessage`,
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Content-Length': postData.length
+    }
+  };
+
+  const req = https.request(options, (res) => {
+    res.on('data', (d) => {
+      // Обработка ответа от Telegram API, если необходимо
+    });
+  });
+
+  req.on('error', (error) => {
+    console.error(error);
+  });
+
+  req.write(postData);
+  req.end();
+});
+
+// Запускаем сервер
+app.listen(3000, () => {
+  console.log('Server is running on port 3000');
+});
