@@ -16,7 +16,7 @@ app.use(bodyParser.json());
     extended: true,
   }))
 
-app.post('/newMessage', async (req, res) => {
+app.post('newMessage', async (req, res) => {
   const { message } = req.body
   console.log(message);
   const messageText = message?.text?.toLowerCase()?.trim()
