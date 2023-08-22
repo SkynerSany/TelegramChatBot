@@ -1,6 +1,6 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const https = require('https');
+import express from 'express';
+import bodyParser from 'body-parser';
+import https from 'https';
 
 // Токен вашего бота, полученный от BotFather
 const token = '6450005981:AAHBINvOdwmyvUtxAOzfbresVKqPUEarQyQ';
@@ -8,6 +8,11 @@ const token = '6450005981:AAHBINvOdwmyvUtxAOzfbresVKqPUEarQyQ';
 // Создаем экземпляр Express
 const app = express();
 app.use(bodyParser.json());
+
+app.get('/message', (req, res) => {
+  // Получаем текст сообщения из запроса
+  res.send('Done')
+});
 
 // Маршрут для обработки входящих сообщений
 app.post('/message', (req, res) => {
@@ -39,18 +44,18 @@ app.post('/message', (req, res) => {
     }
   };
 
-  const req = https.request(options, (res) => {
+  const req1 = https.request(options, (res) => {
     res.on('data', (d) => {
       // Обработка ответа от Telegram API, если необходимо
     });
   });
 
-  req.on('error', (error) => {
+  req1.on('error', (error) => {
     console.error(error);
   });
 
-  req.write(postData);
-  req.end();
+  req1.write(postData);
+  req1.end();
 });
 
 // Запускаем сервер
