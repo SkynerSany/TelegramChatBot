@@ -1,6 +1,7 @@
 import axios from 'axios'
 // import fs from 'fs-extra'
 // import { join } from 'path'
+import bodyParser from 'body-parser';
 import { config } from 'dotenv'
 import express from 'express'
 
@@ -9,12 +10,11 @@ const app = express()
 
 const TELEGRAM_URI = `https://api.telegram.org/bot${process.env.TELEGRAM_API_TOKEN}/sendMessage`
 
-app.use(express.json())
-app.use(
-  express.urlencoded({
-    extended: true
-  })
-)
+app.use(bodyParser.json());
+app.use(bodyParser.json());
+  app.use(bodyParser.urlencoded({
+    extended: true,
+  }))
 
 app.post('/newMessage', async (req, res) => {
   const { message } = req.body
