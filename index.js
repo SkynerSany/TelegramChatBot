@@ -11,7 +11,17 @@ app.use(bodyParser.json());
 
 app.get('/message', (req, res) => {
   // Получаем текст сообщения из запроса
-  res.send('Done')
+  res.send('message')
+});
+
+app.get('/build/message', (req, res) => {
+  // Получаем текст сообщения из запроса
+  res.send('/build/message')
+});
+
+app.get('/build', (req, res) => {
+  // Получаем текст сообщения из запроса
+  res.send('build')
 });
 
 // Маршрут для обработки входящих сообщений
